@@ -1,0 +1,31 @@
+{
+  "name": "full-stack",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/DREAM-TEAM-2026/FULL-STACK#readme",
+  "bugs": {
+    "url": "https://github.com/DREAM-TEAM-2026/FULL-STACK/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DREAM-TEAM-2026/FULL-STACK.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon server.js",
+    "lint": "eslint ./"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.3.0",
+    "eslint-config-dicodingacademy": "^0.9.5",
+    "globals": "^17.6.0",
+    "nodemon": "^3.1.14"
+  }
+}
