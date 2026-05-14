@@ -1,20 +1,8 @@
-import 'dotenv/config';
-import express from 'express';
-import cors from 'cors';
-import routes from './routes.js';
+import server from './server/index.js';
 
-const app = express();
-const PORT = process.env.PORT || 3000;
+const host = process.env.NODE_ENV !== 'production' ? 'localhost' : '0.0.0.0';
+const port = process.env.PORT || 3000;
 
-app.use(
-  cors({
-    origin: '*',
-  }),
-);
-
-app.use(express.json());
-app.use('/', routes);
-
-app.listen(PORT, () => {
-  console.log(`Listening to http://localhost:${PORT}`);
+server.listen(port, () => {
+  console.log(`Server running at http://${host}:${port}`);
 });
