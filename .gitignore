@@ -1,3 +1,5 @@
 node_modules
 .env
-src/services/*
+.prod.env
+src/services/notes
+migrations/1779018681691_create-table-notes.js
