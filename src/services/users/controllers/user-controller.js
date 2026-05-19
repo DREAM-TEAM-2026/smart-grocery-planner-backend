@@ -4,7 +4,6 @@ import NotFoundError from '../../../errors/not-found-error.js';
 
 export const getUserById = async (req, res, next) => {
   const { id } = req.params;
-  console.log(id);
   const user = await UserRepositories.getUserById(id);
 
   if (!user) {
