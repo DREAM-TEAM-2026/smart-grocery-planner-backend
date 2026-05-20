@@ -3,3 +3,4 @@ node_modules
 .prod.env
 src/services/notes
 migrations/1779018681691_create-table-notes.js
+migrations/1779271867692_create-table-search-histories.js
