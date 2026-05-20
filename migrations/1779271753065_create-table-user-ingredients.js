@@ -39,12 +39,13 @@ export const up = (pgm) => {
       notNull: true,
       default: 0,
     },
+    unit: { type: 'VARCHAR(50)', notNull: true },
   });
 
   pgm.createIndex('user_ingredients', 'user_id');
 
-  pgm.addConstraint('user_ingredients', 'unique_user_ingredient', {
-    unique: ['user_id', 'ingredient_id'],
+  pgm.addConstraint('user_ingredients', 'unique_user_ingredient_unit', {
+    unique: ['user_id', 'ingredient_id', 'unit'],
   });
 };
 

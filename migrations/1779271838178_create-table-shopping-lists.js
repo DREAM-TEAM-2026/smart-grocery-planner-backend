@@ -32,6 +32,10 @@ export const up = (pgm) => {
       notNull: true,
       check: 'quantity_needed > 0',
     },
+    unit: {
+      type: 'VARCHAR(50)',
+      notNull: true,
+    },
     is_purchased: {
       type: 'BOOLEAN',
       notNull: true,
@@ -43,11 +47,10 @@ export const up = (pgm) => {
     },
   });
 
-  pgm.createIndex('shopping_lists', 'user_id');
-  pgm.createIndex('shopping_lists', 'week_start_date');
+  pgm.createIndex('shopping_lists', ['user_id', 'week_start_date']);
 
-  pgm.addConstraint('shopping_lists', 'unique_user_weekly_ingredient', {
-    unique: ['user_id', 'ingredient_id', 'week_start_date'],
+  pgm.addConstraint('shopping_lists', 'unique_user_weekly_ingredient_unit', {
+    unique: ['user_id', 'ingredient_id', 'unit', 'week_start_date'],
   });
 };
 
