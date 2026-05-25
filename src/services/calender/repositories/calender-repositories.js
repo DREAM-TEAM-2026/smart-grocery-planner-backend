@@ -8,10 +8,10 @@ class CalenderRepositories {
     this.pool = new Pool({ connectionString: process.env.DATABASE_URL });
   }
 
-  async countUpcomingMeals(id) {
+  async countUpcomingMeals(userId) {
     const query = {
       text: "SELECT COUNT(*) FROM SCHEDULED_MEALS WHERE user_id = $1 AND scheduled_date >= CURRENT_DATE + INTERVAL '1 day';",
-      values: [id],
+      values: [userId],
     };
 
     const result = await this.pool.query(query);
@@ -19,7 +19,7 @@ class CalenderRepositories {
     return result.rows[0].count;
   }
 
-  async saveMealPlan({ id, data }) {
+  async saveMealPlan({ userId, data }) {
     if (!data || data.length === 0) return null;
 
     const values = [];
@@ -33,7 +33,7 @@ class CalenderRepositories {
 
       values.push(
         uuidv7(),
-        id,
+        userId,
         meal.scheduled_date,
         meal.meal_type,
         meal.recipe_name,
@@ -57,17 +57,65 @@ class CalenderRepositories {
     return result.rows;
   }
 
-  async getMealPlan({ id, start_date, end_date }) {
+  async getMealPlan({ userId, start_date, end_date }) {
     const query = {
       text: `SELECT id, scheduled_date, meal_type, recipe_name, minutes, calories, ingredients, cooking_steps 
             FROM SCHEDULED_MEALS WHERE user_id = $1 AND scheduled_date >= $2 AND scheduled_date <= $3 
             ORDER BY scheduled_date ASC;`,
-      values: [id, start_date, end_date],
+      values: [userId, start_date, end_date],
+    };
+
+    const results = await this.pool.query(query);
+    return results.rows;
+  }
+
+  async verifyOwnership(userId, targetScheduleIds) {
+    const query = {
+      text: 'SELECT id FROM SCHEDULED_MEALS WHERE id = ANY($1::uuid[]) AND user_id = $2::uuid;',
+      values: [targetScheduleIds, userId],
     };
 
     const result = await this.pool.query(query);
+    return result.rows.length === targetScheduleIds.length;
+  }
 
-    return result.rows;
+  async updateMealPlan({ userId, data }) {
+    const values = [];
+    const queryPlaceholders = [];
+    let paramIndex = 1;
+
+    data.forEach((item) => {
+      queryPlaceholders.push(
+        `($${paramIndex++}::uuid, $${paramIndex++}::text, $${paramIndex++}::smallint, $${paramIndex++}::smallint, $${paramIndex++}::text[], $${paramIndex++}::text[])`,
+      );
+      values.push(
+        item.target_schedule_id,
+        item.recipe_name,
+        item.minutes,
+        item.calories,
+        item.ingredients,
+        item.cooking_steps,
+      );
+    });
+
+    values.push(userId);
+
+    const queryText = `
+      UPDATE SCHEDULED_MEALS as sm
+      SET 
+          recipe_name = data.recipe_name,
+          minutes = data.minutes,
+          calories = data.calories,
+          ingredients = data.ingredients,
+          cooking_steps = data.cooking_steps
+      FROM (VALUES 
+          ${queryPlaceholders.join(', ')}
+      ) AS data(target_schedule_id, recipe_name, minutes, calories, ingredients, cooking_steps)
+      WHERE sm.id = data.target_schedule_id AND sm.user_id = $${paramIndex}::uuid;
+    `;
+
+    const result = await this.pool.query({ text: queryText, values });
+    return result.rowCount;
   }
 }
 

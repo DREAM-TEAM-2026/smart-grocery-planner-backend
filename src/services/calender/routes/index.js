@@ -5,9 +5,11 @@ import validate from '../../../middlewares/validate.js';
 import {
   applyCalendarSchema,
   getMealPlanPayloadSchema,
+  updateMealPlanSchema,
 } from '../validators/schema.js';
 import { applyMealPlan } from '../controllers/apply-meal-plan.js';
 import { getMealPlan } from '../controllers/get-meal-plan.js';
+import { updateMealPlan } from '../controllers/update-meal-plan.js';
 
 const router = Router();
 
@@ -23,6 +25,13 @@ router.post(
   validate(applyCalendarSchema),
   applyMealPlan,
 );
+router.patch(
+  '/calendar',
+  authenticate,
+  validate(updateMealPlanSchema),
+  updateMealPlan,
+);
+
 router.get('/calendar/generate', authenticate, generateMealPlan);
 
 export default router;

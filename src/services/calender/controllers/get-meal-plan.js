@@ -5,11 +5,11 @@ import calenderRepositories from '../repositories/calender-repositories.js';
 import { NotFoundError } from '../../../errors/index.js';
 
 export const getMealPlan = async (req, res, next) => {
-  const { id } = req.user;
+  const { id: userId } = req.user;
   const { start_date, end_date } = req.validated;
 
   const mealPlan = await calenderRepositories.getMealPlan({
-    id,
+    userId,
     start_date,
     end_date,
   });

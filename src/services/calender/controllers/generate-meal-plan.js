@@ -6,9 +6,9 @@ import calenderRepositories from '../repositories/calender-repositories.js';
 import { InvariantError } from '../../../errors/index.js';
 
 export const generateMealPlan = async (req, res, next) => {
-  const { id } = req.user;
+  const { id: userId } = req.user;
 
-  if ((await calenderRepositories.countUpcomingMeals(id)) > 0) {
+  if ((await calenderRepositories.countUpcomingMeals(userId)) > 0) {
     return next(
       new InvariantError(
         'Masih ada jadwal makan untuk esok hari. Harap hapus jadwal esok hari terlebih dahulu sebelum membuat jadwal baru.',
