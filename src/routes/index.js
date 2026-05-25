@@ -5,8 +5,8 @@ import calendar from '../services/calender/routes/index.js';
 
 const router = Router();
 
-router.use('/', calendar);
-router.use('/', notes);
 router.use('/', users);
+router.use('/', notes);
+router.use('/', calendar);
 
 export default router;
