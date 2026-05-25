@@ -1,7 +1,7 @@
 /**
  * @type {import('node-pg-migrate').ColumnDefinitions | undefined}
  */
-// export const shorthands = undefined;
+export const shorthands = undefined;
 
 /**
  * @param pgm {import('node-pg-migrate').MigrationBuilder}
@@ -9,23 +9,7 @@
  * @returns {Promise<void> | void}
  */
 export const up = (pgm) => {
-  pgm.createTable('recipes', {
-    id: {
-      type: 'UUID',
-      primaryKey: true,
-    },
-    title: {
-      type: 'VARCHAR(255)',
-      notNull: true,
-    },
-    description: {
-      type: 'TEXT',
-    },
-    instructions: {
-      type: 'TEXT',
-      notNull: true,
-    },
-  });
+  pgm.createType('meal_type_enum', ['breakfast', 'lunch', 'dinner']);
 };
 
 /**
@@ -34,5 +18,5 @@ export const up = (pgm) => {
  * @returns {Promise<void> | void}
  */
 export const down = (pgm) => {
-  pgm.dropTable('recipes', { cascade: true });
+  pgm.dropType('meal_type_enum');
 };
