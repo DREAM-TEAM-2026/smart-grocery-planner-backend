@@ -1,6 +1,6 @@
 import response from '../../../utils/response.js';
 import calenderRepositories from '../repositories/calender-repositories.js';
-import InvariantError from '../../../errors/invariant-error.js';
+import { InvariantError } from '../../../errors/index.js';
 
 export const applyMealPlan = async (req, res, next) => {
   const { id } = req.user;
@@ -17,7 +17,7 @@ export const applyMealPlan = async (req, res, next) => {
   const mealPlan = await calenderRepositories.saveMealPlan({ id, data });
 
   if (!mealPlan) {
-    return next(new InvariantError('Error'));
+    return next(new InvariantError('Meal plan gagal disimpan'));
   }
 
   return response(res, 201, 'Meal Plan berhasil diterapkan');
