@@ -3,7 +3,7 @@
 import 'dotenv/config';
 import response from '../../../utils/response.js';
 import calenderRepositories from '../repositories/calender-repositories.js';
-import InvariantError from '../../../errors/invariant-error.js';
+import { InvariantError } from '../../../errors/index.js';
 
 export const generateMealPlan = async (req, res, next) => {
   const { id } = req.user;
