@@ -16,3 +16,8 @@ export const applyCalendarSchema = Joi.array()
   .items(mealSlotSchema)
   .length(21)
   .required();
+
+export const getMealPlanPayloadSchema = Joi.object({
+  start_date: Joi.date().iso().required(),
+  end_date: Joi.date().iso().required(),
+});

@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import 'dotenv/config';
 import { Pool } from 'pg';
 import { v7 as uuidv7 } from 'uuid';
@@ -49,6 +50,19 @@ class CalenderRepositories {
               VALUES ${placeholders.join(', ')}
               RETURNING *`,
       values: values,
+    };
+
+    const result = await this.pool.query(query);
+
+    return result.rows;
+  }
+
+  async getMealPlan({ id, start_date, end_date }) {
+    const query = {
+      text: `SELECT id, scheduled_date, meal_type, recipe_name, minutes, calories, ingredients, cooking_steps 
+            FROM SCHEDULED_MEALS WHERE user_id = $1 AND scheduled_date >= $2 AND scheduled_date <= $3 
+            ORDER BY scheduled_date ASC;`,
+      values: [id, start_date, end_date],
     };
 
     const result = await this.pool.query(query);
