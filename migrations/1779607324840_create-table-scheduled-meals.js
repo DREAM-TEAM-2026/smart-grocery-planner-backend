@@ -18,7 +18,7 @@ export const up = (pgm) => {
       references: '"neon_auth"."user"',
       onDelete: 'CASCADE',
     },
-    sheduled_date: { type: 'DATE', notNull: true },
+    scheduled_date: { type: 'DATE', notNull: true },
     meal_type: { type: 'meal_type_enum', notNull: true },
     recipe_name: { type: 'VARCHAR(100)', notNull: true },
     minutes: { type: 'SMALLINT' },
