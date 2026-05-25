@@ -21,3 +21,20 @@ export const getMealPlanPayloadSchema = Joi.object({
   start_date: Joi.date().iso().required(),
   end_date: Joi.date().iso().required(),
 });
+
+// Tambahkan export baru di bawah
+export const updateMealPlanSchema = Joi.object({
+  swaps: Joi.array()
+    .items(
+      Joi.object({
+        target_schedule_id: Joi.string().uuid().required(),
+        recipe_name: Joi.string().required(),
+        minutes: Joi.number().integer().min(0).required(),
+        calories: Joi.number().integer().min(0).required(),
+        ingredients: Joi.array().items(Joi.string()).min(1).required(),
+        cooking_steps: Joi.array().items(Joi.string()).min(1).required(),
+      }),
+    )
+    .min(1)
+    .required(),
+});
