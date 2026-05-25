@@ -3,10 +3,10 @@ import calenderRepositories from '../repositories/calender-repositories.js';
 import { InvariantError } from '../../../errors/index.js';
 
 export const applyMealPlan = async (req, res, next) => {
-  const { id } = req.user;
+  const { id: userId } = req.user;
   const data = req.validated;
 
-  if ((await calenderRepositories.countUpcomingMeals(id)) > 0) {
+  if ((await calenderRepositories.countUpcomingMeals(userId)) > 0) {
     return next(
       new InvariantError(
         'Masih ada jadwal makan untuk esok hari. Harap hapus jadwal esok hari terlebih dahulu sebelum membuat jadwal baru.',
@@ -14,7 +14,7 @@ export const applyMealPlan = async (req, res, next) => {
     );
   }
 
-  const mealPlan = await calenderRepositories.saveMealPlan({ id, data });
+  const mealPlan = await calenderRepositories.saveMealPlan({ userId, data });
 
   if (!mealPlan) {
     return next(new InvariantError('Meal plan gagal disimpan'));
