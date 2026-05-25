@@ -3,7 +3,7 @@
 /**
  * @type {import('node-pg-migrate').ColumnDefinitions | undefined}
  */
-// export const shorthands = undefined;
+export const shorthands = undefined;
 
 /**
  * @param pgm {import('node-pg-migrate').MigrationBuilder}
@@ -11,26 +11,20 @@
  * @returns {Promise<void> | void}
  */
 export const up = (pgm) => {
-  pgm.createTable('users', {
-    id: {
+  pgm.createTable('scheduled_meals', {
+    id: { type: 'UUID', primaryKey: true },
+    user_id: {
       type: 'UUID',
-      primaryKey: true,
       references: '"neon_auth"."user"',
       onDelete: 'CASCADE',
-      notNull: true,
     },
-    username: { type: 'VARCHAR(50)', notNull: true, unique: true },
-    fullname: { type: 'TEXT', notNull: true },
-    created_at: {
-      type: 'TIMESTAMP',
-      notNull: true,
-      default: pgm.func('current_timestamp'),
-    },
-    updated_at: {
-      type: 'TIMESTAMP',
-      notNull: true,
-      default: pgm.func('current_timestamp'),
-    },
+    scheduled_date: { type: 'DATE', notNull: true },
+    meal_type: { type: 'meal_type_enum', notNull: true },
+    recipe_name: { type: 'VARCHAR(100)', notNull: true },
+    minutes: { type: 'SMALLINT' },
+    calories: { type: 'SMALLINT', notNull: true },
+    ingredients: { type: 'TEXT[]', notNull: true },
+    cooking_steps: { type: 'TEXT[]', notNull: true },
   });
 };
 
@@ -40,5 +34,5 @@ export const up = (pgm) => {
  * @returns {Promise<void> | void}
  */
 export const down = (pgm) => {
-  pgm.dropTable('users');
+  pgm.dropTable('scheduled_meals', { cascade: true });
 };
