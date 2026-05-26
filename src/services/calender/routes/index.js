@@ -10,6 +10,7 @@ import {
 import { applyMealPlan } from '../controllers/apply-meal-plan.js';
 import { getMealPlan } from '../controllers/get-meal-plan.js';
 import { updateMealPlan } from '../controllers/update-meal-plan.js';
+import { recommendMealPlan } from '../controllers/recommend-meal-plan.js';
 
 const router = Router();
 
@@ -31,7 +32,7 @@ router.patch(
   validate(updateMealPlanSchema),
   updateMealPlan,
 );
-
 router.get('/calendar/generate', authenticate, generateMealPlan);
+router.get('/calendar/recommend', recommendMealPlan);
 
 export default router;

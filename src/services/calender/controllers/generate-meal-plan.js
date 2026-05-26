@@ -27,12 +27,12 @@ export const generateMealPlan = async (req, res, next) => {
   });
 
   if (!aiResponse.ok) {
-    return next(new Error(`Response status: ${aiResponse.status}`));
+    return next(new InvariantError(`Response status: ${aiResponse.status}`));
   }
 
-  const result = await aiResponse.json();
+  const results = await aiResponse.json();
 
-  const { days } = result;
+  const { days } = results;
 
   const extractedMealPlan = days.flatMap((day) => {
     const meals = [];
