@@ -17,13 +17,18 @@ export const generateMealPlan = async (req, res, next) => {
   }
 
   const aiApi = `${process.env.AI_SERVICE_URL}/meal-plan/generate`;
+  const tomorrowDate = new Date();
+  tomorrowDate.setDate(tomorrowDate.getDate() + 1);
 
   const aiResponse = await fetch(aiApi, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(req.body),
+    body: JSON.stringify({
+      ...req.body,
+      start_date: tomorrowDate.toISOString().split('T')[0],
+    }),
   });
 
   if (!aiResponse.ok) {

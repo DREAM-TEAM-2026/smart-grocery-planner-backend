@@ -6,6 +6,23 @@ export const applyMealPlan = async (req, res, next) => {
   const { id: userId } = req.user;
   const data = req.validated;
 
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  tomorrow.setHours(0, 0, 0, 0);
+
+  const hasPastOrTodayDate = data.some((meal) => {
+    const mealDate = new Date(meal.scheduled_date);
+    return mealDate < tomorrow;
+  });
+
+  if (hasPastOrTodayDate) {
+    return next(
+      new InvariantError(
+        'Jadwal makan hanya dapat diterapkan untuk waktu esok hari dan seterusnya.',
+      ),
+    );
+  }
+
   if ((await calenderRepositories.countUpcomingMeals(userId)) > 0) {
     return next(
       new InvariantError(
