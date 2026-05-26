@@ -117,6 +117,16 @@ class CalenderRepositories {
     const result = await this.pool.query({ text: queryText, values });
     return result.rowCount;
   }
+
+  async deleteUpcomingMeal(userId) {
+    const query = {
+      text: "DELETE FROM SCHEDULED_MEALS WHERE user_id = $1 AND scheduled_date >= CURRENT_DATE + INTERVAL '1 day';",
+      values: [userId],
+    };
+
+    const results = await this.pool.query(query);
+    return results.rowCount;
+  }
 }
 
 export default new CalenderRepositories();
