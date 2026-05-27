@@ -8,10 +8,10 @@ class CalenderRepositories {
     this.pool = new Pool({ connectionString: process.env.DATABASE_URL });
   }
 
-  async countUpcomingMeals(userId) {
+  async countUpcomingMeals({ userId, tomorrowStr }) {
     const query = {
-      text: "SELECT COUNT(*) FROM SCHEDULED_MEALS WHERE user_id = $1 AND scheduled_date >= CURRENT_DATE + INTERVAL '1 day';",
-      values: [userId],
+      text: 'SELECT COUNT(*) FROM SCHEDULED_MEALS WHERE user_id = $1 AND scheduled_date >= $2;',
+      values: [userId, tomorrowStr],
     };
 
     const result = await this.pool.query(query);
@@ -69,7 +69,7 @@ class CalenderRepositories {
     return results.rows;
   }
 
-  async verifyOwnership(userId, targetScheduleIds) {
+  async verifyOwnership({ userId, targetScheduleIds }) {
     const query = {
       text: 'SELECT id FROM SCHEDULED_MEALS WHERE id = ANY($1::uuid[]) AND user_id = $2::uuid;',
       values: [targetScheduleIds, userId],
@@ -118,10 +118,20 @@ class CalenderRepositories {
     return result.rowCount;
   }
 
-  async deleteUpcomingMeal(userId) {
+  async deleteMealPlanById({ scheduleId, userId }) {
     const query = {
-      text: "DELETE FROM SCHEDULED_MEALS WHERE user_id = $1 AND scheduled_date >= CURRENT_DATE + INTERVAL '1 day';",
-      values: [userId],
+      text: 'DELETE FROM SCHEDULED_MEALS WHERE id = $1 AND user_id = $2 RETURNING id;',
+      values: [scheduleId, userId],
+    };
+
+    const results = await this.pool.query(query);
+    return results.rows[0]?.id || null;
+  }
+
+  async deleteUpcomingMeal({ userId, tomorrowStr }) {
+    const query = {
+      text: 'DELETE FROM SCHEDULED_MEALS WHERE user_id = $1 AND scheduled_date >= $2;',
+      values: [userId, tomorrowStr],
     };
 
     const results = await this.pool.query(query);
