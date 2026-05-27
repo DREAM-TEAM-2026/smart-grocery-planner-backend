@@ -12,7 +12,7 @@ export const recommendMealPlan = async (req, res, next) => {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(req.body),
+    body: JSON.stringify(req.validated),
   });
 
   if (!aiResponse.ok) {
@@ -23,19 +23,13 @@ export const recommendMealPlan = async (req, res, next) => {
 
   const { recommendations } = results;
 
-  const extractedRecipes = recommendations.flatMap((item) => {
-    const recipes = [];
-
-    recipes.push({
-      recipe_name: item.recipe_name,
-      minutes: item.minutes,
-      calories: item.calories,
-      ingredients: item.ingredients,
-      cooking_steps: item.cooking_steps,
-    });
-
-    return recipes;
-  });
+  const extractedRecipes = recommendations.map((item) => ({
+    recipe_name: item.recipe_name,
+    minutes: item.minutes,
+    calories: item.calories,
+    ingredients: item.ingredients,
+    cooking_steps: item.cooking_steps,
+  }));
 
   return response(res, 200, 'Berhasil ditampilkan', {
     recipes: extractedRecipes,
