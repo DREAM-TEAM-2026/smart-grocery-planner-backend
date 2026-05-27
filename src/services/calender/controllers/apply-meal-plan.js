@@ -1,18 +1,27 @@
 import response from '../../../utils/response.js';
 import calenderRepositories from '../repositories/calender-repositories.js';
 import { InvariantError } from '../../../errors/index.js';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc.js';
+import timezone from 'dayjs/plugin/timezone.js';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 export const applyMealPlan = async (req, res, next) => {
   const { id: userId } = req.user;
   const data = req.validated;
+  const userTimezone = req.validHead['x-timezone'] || 'UTC';
+  // frontend need to do this const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  tomorrow.setHours(0, 0, 0, 0);
+  const tomorrowStr = dayjs()
+    .tz(userTimezone)
+    .add(1, 'day')
+    .format('YYYY-MM-DD');
 
   const hasPastOrTodayDate = data.some((meal) => {
-    const mealDate = new Date(meal.scheduled_date);
-    return mealDate < tomorrow;
+    const mealDateStr = dayjs(meal.scheduled_date).format('YYYY-MM-DD');
+    return mealDateStr < tomorrowStr;
   });
 
   if (hasPastOrTodayDate) {
@@ -23,10 +32,12 @@ export const applyMealPlan = async (req, res, next) => {
     );
   }
 
-  if ((await calenderRepositories.countUpcomingMeals(userId)) > 0) {
+  if (
+    (await calenderRepositories.countUpcomingMeals({ userId, tomorrowStr })) > 0
+  ) {
     return next(
       new InvariantError(
-        'Masih ada jadwal makan untuk esok hari. Harap hapus jadwal esok hari terlebih dahulu sebelum membuat jadwal baru.',
+        'Harap hapus jadwal esok hari terlebih dahulu sebelum menyimpan jadwal baru.',
       ),
     );
   }
