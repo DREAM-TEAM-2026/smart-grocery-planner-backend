@@ -4,11 +4,14 @@ import { InvariantError } from '../../../errors/index.js';
 
 export const updateMealPlan = async (req, res, next) => {
   const { id: userId } = req.user;
-  const { swaps: data } = req.body;
+  const { swaps: data } = req.validated;
 
-  const targetIds = data.map((s) => s.target_schedule_id);
+  const targetScheduleIds = data.map((s) => s.target_schedule_id);
 
-  const isOwner = await calenderRepositories.verifyOwnership(userId, targetIds);
+  const isOwner = await calenderRepositories.verifyOwnership({
+    userId,
+    targetScheduleIds,
+  });
 
   if (!isOwner) {
     return next(

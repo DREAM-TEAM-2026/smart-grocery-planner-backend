@@ -4,14 +4,32 @@ import 'dotenv/config';
 import response from '../../../utils/response.js';
 import calenderRepositories from '../repositories/calender-repositories.js';
 import { InvariantError } from '../../../errors/index.js';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc.js';
+import timezone from 'dayjs/plugin/timezone.js';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 export const generateMealPlan = async (req, res, next) => {
   const { id: userId } = req.user;
+  const userTimezone = req.validHead['x-timezone'];
+  // const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-  if ((await calenderRepositories.countUpcomingMeals(userId)) > 0) {
+  const tomorrowStr = dayjs()
+    .tz(userTimezone)
+    .add(1, 'day')
+    .format('YYYY-MM-DD');
+
+  console.log(userTimezone);
+  console.log(tomorrowStr);
+
+  if (
+    (await calenderRepositories.countUpcomingMeals({ userId, tomorrowStr })) > 0
+  ) {
     return next(
       new InvariantError(
-        'Masih ada jadwal makan untuk esok hari. Harap hapus jadwal esok hari terlebih dahulu sebelum membuat jadwal baru.',
+        'Harap hapus jadwal esok hari terlebih dahulu sebelum membuat jadwal baru.',
       ),
     );
   }
@@ -23,16 +41,19 @@ export const generateMealPlan = async (req, res, next) => {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(req.body),
+    body: JSON.stringify({
+      ...req.body,
+      start_date: tomorrowStr,
+    }),
   });
 
   if (!aiResponse.ok) {
-    return next(new Error(`Response status: ${aiResponse.status}`));
+    return next(new InvariantError(`Response status: ${aiResponse.status}`));
   }
 
-  const result = await aiResponse.json();
+  const results = await aiResponse.json();
 
-  const { days } = result;
+  const { days } = results;
 
   const extractedMealPlan = days.flatMap((day) => {
     const meals = [];

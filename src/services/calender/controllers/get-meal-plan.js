@@ -3,6 +3,7 @@
 import response from '../../../utils/response.js';
 import calenderRepositories from '../repositories/calender-repositories.js';
 import { NotFoundError } from '../../../errors/index.js';
+import dayjs from 'dayjs';
 
 export const getMealPlan = async (req, res, next) => {
   const { id: userId } = req.user;
@@ -14,14 +15,12 @@ export const getMealPlan = async (req, res, next) => {
     end_date,
   });
 
-  if (!mealPlan) {
+  if (!mealPlan.length === 0) {
     return next(new NotFoundError('Meal plan Tidak ditemukan'));
   }
 
   const groupedCalendar = mealPlan.reduce((accumulator, current) => {
-    const dateObj = new Date(current.scheduled_date);
-
-    const dateKey = dateObj.toISOString().split('T')[0];
+    const dateKey = dayjs(current.scheduled_date).format('YYYY-MM-DD');
     const mealType = current.meal_type;
 
     if (!accumulator[dateKey]) {
@@ -40,5 +39,5 @@ export const getMealPlan = async (req, res, next) => {
     return accumulator;
   }, {});
 
-  return response(res, 201, 'Mealplan Sukses Ditampilkan', groupedCalendar);
+  return response(res, 200, 'Meal plan Sukses Ditampilkan', groupedCalendar);
 };

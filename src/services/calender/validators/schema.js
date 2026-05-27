@@ -38,3 +38,35 @@ export const updateMealPlanSchema = Joi.object({
     .min(1)
     .required(),
 });
+
+export const mealPlanIdParamSchema = Joi.object({
+  id: Joi.string().uuid().required(),
+});
+
+export const recommendPayloadSchema = Joi.object({
+  ingredients: Joi.array().items(Joi.string()).min(1).required(),
+  min_calories: Joi.number().integer().min(0),
+  max_calories: Joi.number().integer().min(Joi.ref('min_calories')).messages({
+    'number.min': '"max_calories" tidak boleh lebih kecil dari "min_calories"',
+  }),
+});
+
+const timezoneValidator = (value, helpers) => {
+  try {
+    Intl.DateTimeFormat(undefined, { timeZone: value });
+    return value;
+  } catch {
+    return helpers.error('any.invalid');
+  }
+};
+
+export const headerTimezoneSchema = Joi.object({
+  'x-timezone': Joi.string()
+    .trim()
+    .default('UTC')
+    .custom(timezoneValidator)
+    .messages({
+      'any.invalid':
+        'Header x-timezone wajib dalam format IANA (cth: Asia/Jakarta)',
+    }),
+}).unknown(true);
