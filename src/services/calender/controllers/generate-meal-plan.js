@@ -21,9 +21,6 @@ export const generateMealPlan = async (req, res, next) => {
     .add(1, 'day')
     .format('YYYY-MM-DD');
 
-  console.log(userTimezone);
-  console.log(tomorrowStr);
-
   if (
     (await calenderRepositories.countUpcomingMeals({ userId, tomorrowStr })) > 0
   ) {

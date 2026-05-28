@@ -15,7 +15,7 @@ export const getMealPlan = async (req, res, next) => {
     end_date,
   });
 
-  if (!mealPlan.length === 0) {
+  if (!mealPlan || mealPlan.length === 0) {
     return next(new NotFoundError('Meal plan Tidak ditemukan'));
   }
 
