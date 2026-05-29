@@ -1,8 +1,9 @@
 /* eslint-disable camelcase */
+
 /**
  * @type {import('node-pg-migrate').ColumnDefinitions | undefined}
  */
-// export const shorthands = undefined;a
+export const shorthands = undefined;
 
 /**
  * @param pgm {import('node-pg-migrate').MigrationBuilder}
@@ -10,18 +11,12 @@
  * @returns {Promise<void> | void}
  */
 export const up = (pgm) => {
-  pgm.createTable('shopping_cart_items', {
+  pgm.createTable('shopping_cart_state', {
     id: { type: 'UUID', notNull: true, primaryKey: true },
-    user_id: {
-      type: 'UUID',
-      notNull: true,
-      references: '"neon_auth"."user"',
-      onDelete: 'CASCADE',
-    },
-    ingredient_name: { type: 'VARCHAR(50)', notNull: true },
-    required_amount: { type: 'SMALLINT', notNull: true },
-    is_checked: { type: 'BOOLEAN' },
-    recipe_sources: { type: 'JSONB', notNull: true },
+    user_id: { type: 'UUID', notNull: true, references: '"neon_auth"."user"' },
+    start_date: { type: 'DATE', notNull: true },
+    end_date: { type: 'DATE', notNull: true },
+    generated_at: { type: 'TIMESTAMP', notNull: true },
   });
 };
 
@@ -31,5 +26,5 @@ export const up = (pgm) => {
  * @returns {Promise<void> | void}
  */
 export const down = (pgm) => {
-  pgm.dropTable('shopping_cart_items', { cascade: true });
+  pgm.dropTable('shopping_cart_state', { cascade: true });
 };

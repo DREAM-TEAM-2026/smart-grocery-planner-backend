@@ -25,6 +25,7 @@ export const up = (pgm) => {
     calories: { type: 'SMALLINT', notNull: true },
     ingredients: { type: 'TEXT[]', notNull: true },
     cooking_steps: { type: 'TEXT[]', notNull: true },
+    updated_at: { type: 'TIMESTAMP' },
   });
 };
 
