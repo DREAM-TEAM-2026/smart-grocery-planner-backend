@@ -5,3 +5,7 @@ export const generateCartSchema = Joi.object({
     'any.only': 'Jumlah hari (days) hanya boleh bernilai 1 atau 7',
   }),
 });
+
+export const shoppingCartIdParamSchema = Joi.object({
+  id: Joi.string().uuid().required(),
+});

@@ -17,8 +17,6 @@ export const generateShoppingCart = async (req, res, next) => {
   const { days } = req.validated;
   const userTimezone = req.validHead['x-timezone'];
 
-  await shoppingCartRepositories.deleteCurrentShoppingCart(userId);
-
   const tomorrowStr = dayjs()
     .tz(userTimezone)
     .add(1, 'day')
@@ -43,7 +41,6 @@ export const generateShoppingCart = async (req, res, next) => {
     );
   }
 
-  // 5. Transformasi & Agregasi Matematika (Lapisan Memori)
   const ingredientMap = new Map();
 
   mealPlan.forEach((meal) => {
@@ -72,10 +69,6 @@ export const generateShoppingCart = async (req, res, next) => {
 
   const finalItems = Array.from(ingredientMap.values());
 
-  // if (finalItems.length === 0) {
-  //   return res.status(204).send();
-  // }
-
   const values = [];
   const queryParams = [];
   let index = 1;
@@ -95,14 +88,74 @@ export const generateShoppingCart = async (req, res, next) => {
 
   const valuesStr = values.join(', ');
 
-  const shoppingCart = await shoppingCartRepositories.addShoppingCart({
+  const stateData = {
+    id: uuidv7(),
+    userId,
+    startDate: tomorrowStr,
+    endDate: targetDayStr,
+  };
+
+  const shoppingCart = await shoppingCartRepositories.generateNewCart({
+    userId,
     valuesStr,
     queryParams,
+    stateData,
   });
 
   if (!shoppingCart || shoppingCart === 0) {
-    return next(new InvariantError('Meal plan gagal disimpan'));
+    return next(new InvariantError('Shopping cart gagal disimpan'));
   }
 
   return response(res, 201, 'Shopping cart berhasil dibuat');
+};
+
+export const getShoppingCart = async (req, res, next) => {
+  const { id: userId } = req.user;
+
+  const cartItems = await shoppingCartRepositories.getShoppingCart(userId);
+
+  if (!cartItems || cartItems.length === 0) {
+    return next(new NotFoundError('Shopping Cart tidak ditemukan'));
+  }
+
+  let isStale = false;
+  const cartState = await shoppingCartRepositories.getCartState(userId);
+
+  if (cartState) {
+    const { start_date, end_date, generated_at } = cartState;
+
+    const modifiedRecord =
+      await shoppingCartRepositories.getCalendarLastModified({
+        userId,
+        startDate: start_date,
+        endDate: end_date,
+      });
+
+    const calendarLastModified = modifiedRecord?.calendar_last_modified;
+
+    if (calendarLastModified !== null && calendarLastModified !== undefined) {
+      const dtLastModified = calendarLastModified.getTime();
+      const dtGeneratedAt = generated_at.getTime();
+
+      isStale = dtLastModified > dtGeneratedAt;
+    }
+  }
+
+  return response(res, 200, 'Shopping cart berhasil ditampilkan', {
+    is_stale: isStale,
+    items: cartItems,
+  });
+};
+
+export const toggleShoppingCart = async (req, res, next) => {
+  const { id: userId } = req.user;
+  const { id: itemId } = req.validated;
+
+  const toggle = await shoppingCartRepositories.toggleCart({ userId, itemId });
+
+  if (!toggle) {
+    return next(new InvariantError('Id Bahan tidak ditemukan'));
+  }
+
+  return response(res, 200, 'Toggle berhasil', toggle);
 };
