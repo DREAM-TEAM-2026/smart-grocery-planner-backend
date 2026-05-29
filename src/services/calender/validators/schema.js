@@ -35,6 +35,11 @@ export const updateMealPlanSchema = Joi.object({
         cooking_steps: Joi.array().items(Joi.string()).min(1).required(),
       }),
     )
+    .unique('target_schedule_id') // <-- Menambahkan validasi unik beradasarkan field ini
+    .messages({
+      'array.unique':
+        'target_schedule_id di dalam swaps tidak boleh ada yang duplikat',
+    })
     .min(1)
     .required(),
 });

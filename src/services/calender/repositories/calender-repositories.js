@@ -107,7 +107,8 @@ class CalenderRepositories {
           minutes = data.minutes,
           calories = data.calories,
           ingredients = data.ingredients,
-          cooking_steps = data.cooking_steps
+          cooking_steps = data.cooking_steps,
+          updated_at = NOW()
       FROM (VALUES 
           ${queryPlaceholders.join(', ')}
       ) AS data(target_schedule_id, recipe_name, minutes, calories, ingredients, cooking_steps)
