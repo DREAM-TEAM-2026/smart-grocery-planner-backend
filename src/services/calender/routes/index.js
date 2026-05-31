@@ -60,13 +60,13 @@ router.delete(
   validate(mealPlanIdParamSchema),
   deleteMealPlanById,
 );
-router.get(
+router.post(
   '/calendar/generate',
   authenticate,
   validateHeaders(headerTimezoneSchema),
   generateMealPlan,
 );
-router.get(
+router.post(
   '/calendar/recommend',
   validate(recommendPayloadSchema),
   recommendMealPlan,
