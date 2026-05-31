@@ -1,8 +1,9 @@
 import Joi from 'joi';
 
 export const generateCartSchema = Joi.object({
-  days: Joi.number().valid(1, 7).required().messages({
-    'any.only': 'Jumlah hari (days) hanya boleh bernilai 1 atau 7',
+  days: Joi.number().integer().min(1).max(7).required().messages({
+    'number.min': 'Days must be at least 1',
+    'number.max': 'Days cannot exceed 7',
   }),
 });
 
