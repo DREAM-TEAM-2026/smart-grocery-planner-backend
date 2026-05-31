@@ -16,7 +16,12 @@ import { headerTimezoneSchema } from '../../calender/validators/schema.js';
 
 const router = Router();
 
-router.get('/shopping-cart', authenticate, getShoppingCart);
+router.get(
+  '/shopping-cart',
+  authenticate,
+  validateHeaders(headerTimezoneSchema),
+  getShoppingCart,
+);
 router.post(
   '/shopping-cart/generate',
   authenticate,

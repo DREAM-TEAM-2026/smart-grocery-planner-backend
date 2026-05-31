@@ -111,6 +111,7 @@ export const generateShoppingCart = async (req, res, next) => {
 
 export const getShoppingCart = async (req, res, next) => {
   const { id: userId } = req.user;
+  const userTimezone = req.validHead['x-timezone'];
 
   const cartItems = await shoppingCartRepositories.getShoppingCart(userId);
 
@@ -119,6 +120,7 @@ export const getShoppingCart = async (req, res, next) => {
   }
 
   let isStale = false;
+  let isExpired = false;
   const cartState = await shoppingCartRepositories.getCartState(userId);
 
   if (cartState) {
@@ -139,10 +141,16 @@ export const getShoppingCart = async (req, res, next) => {
 
       isStale = dtLastModified > dtGeneratedAt;
     }
+
+    const today = dayjs().tz(userTimezone).startOf('day');
+    const cartEndDate = dayjs(end_date).tz(userTimezone).startOf('day');
+
+    isExpired = today.isAfter(cartEndDate);
   }
 
   return response(res, 200, 'Shopping cart berhasil ditampilkan', {
     is_stale: isStale,
+    is_expired: isExpired,
     items: cartItems,
   });
 };
