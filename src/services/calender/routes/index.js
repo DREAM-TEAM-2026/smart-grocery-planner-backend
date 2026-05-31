@@ -12,12 +12,14 @@ import {
 } from '../validators/schema.js';
 import { applyMealPlan } from '../controllers/apply-meal-plan.js';
 import { getMealPlan } from '../controllers/get-meal-plan.js';
+import { getMealDetailsById } from '../controllers/get-meal-details-by-id.js';
 import { updateMealPlan } from '../controllers/update-meal-plan.js';
 import { recommendMealPlan } from '../controllers/recommend-meal-plan.js';
 import { deleteFutureMealPlan } from '../controllers/delete-future-meal-plan.js';
 import { deleteMealPlanById } from '../controllers/delete-meal-plan-by-id.js';
 import validateHeaders from '../../../middlewares/validateHeaders.js';
 import validateQuery from '../../../middlewares/validateQuery.js';
+import validateParams from '../../../middlewares/validateParams.js';
 
 const router = Router();
 
@@ -26,6 +28,12 @@ router.get(
   authenticate,
   validateQuery(getMealPlanPayloadSchema),
   getMealPlan,
+);
+router.get(
+  '/calendar/:id',
+  authenticate,
+  validateParams(mealPlanIdParamSchema),
+  getMealDetailsById,
 );
 router.post(
   '/calendar',

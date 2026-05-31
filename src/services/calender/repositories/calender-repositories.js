@@ -57,6 +57,17 @@ class CalenderRepositories {
     return result.rows;
   }
 
+  async getMealDetails({ userId, slotId }) {
+    const query = {
+      text: `SELECT id, recipe_name, minutes, calories, ingredients, cooking_steps
+            FROM SCHEDULED_MEALS WHERE user_id = $1 AND id = $2`,
+      values: [userId, slotId],
+    };
+
+    const results = await this.pool.query(query);
+    return results.rows[0];
+  }
+
   async getMealPlan({ userId, start_date, end_date }) {
     const query = {
       text: `SELECT id, scheduled_date, meal_type, recipe_name, minutes, calories, ingredients, cooking_steps 
