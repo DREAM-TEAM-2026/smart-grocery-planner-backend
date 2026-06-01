@@ -15,8 +15,14 @@ export const getMealPlan = async (req, res, next) => {
     end_date,
   });
 
-  if (!mealPlan || mealPlan.length === 0) {
-    return next(new NotFoundError('Meal plan Tidak ditemukan'));
+  if (mealPlan.length === 0) {
+    return response(res, 204);
+  }
+
+  if (!mealPlan) {
+    return next(
+      new NotFoundError('Meal plan Tidak ditemukan Di rentang waktu ini'),
+    );
   }
 
   const groupedCalendar = mealPlan.reduce((accumulator, current) => {
