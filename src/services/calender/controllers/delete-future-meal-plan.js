@@ -24,7 +24,7 @@ export const deleteFutureMealPlan = async (req, res, next) => {
   });
 
   if (!deletedMealPlan) {
-    return next(new NotFoundError('Meal Plan Tidak ditemukan'));
+    return response(res, 204, 'Tidak ada Jadwal untuk dihapus');
   }
 
   return response(res, 200, `${deletedMealPlan} Jadwal berhasil dihapus`);
