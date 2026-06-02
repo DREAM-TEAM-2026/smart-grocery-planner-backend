@@ -45,7 +45,7 @@ export const generateMealPlan = async (req, res, next) => {
   });
 
   if (!aiResponse.ok) {
-    return next(new InvariantError(`Response status: ${aiResponse.status}`));
+    return next(new InvariantError(`AI Response status: ${aiResponse.status}`));
   }
 
   const results = await aiResponse.json();
