@@ -195,36 +195,36 @@ src/
 
 ### Users
 
-| Method | Endpoint | Auth | Deskripsi |
-| --- | --- | --- | --- |
-| GET | `/users/:id` | Tidak | Mengambil data pengguna berdasarkan ID |
+| Method | Endpoint     | Auth  | Deskripsi                              |
+|--------|--------------|-------|----------------------------------------|
+| GET    | `/users/:id` | Tidak | Mengambil data pengguna berdasarkan ID |
 
 ### Calendar / Meal Plan
 
-| Method | Endpoint | Auth | Deskripsi |
-| --- | --- |----| --- |
-| GET | `/calendar` | Ya | Mengambil meal plan pengguna |
-| GET | `/calendar/:id` | Ya | Mengambil detail meal plan berdasarkan ID |
-| POST | `/calendar` | Ya | Menyimpan atau menerapkan meal plan ke kalender |
-| PATCH | `/calendar` | Ya | Memperbarui meal plan |
-| DELETE | `/calendar/future` | Ya | Menghapus meal plan untuk jadwal mendatang |
-| DELETE | `/calendar/:id` | Ya | Menghapus meal plan berdasarkan ID |
-| POST | `/calendar/generate` | Ya | Generate meal plan |
-| POST | `/recommend` | Ya | Mendapatkan rekomendasi meal plan |
+| Method | Endpoint             | Auth | Deskripsi                                       |
+|--------|----------------------|------|-------------------------------------------------|
+| GET    | `/calendar`          | Ya   | Mengambil meal plan pengguna                    |
+| GET    | `/calendar/:id`      | Ya   | Mengambil detail meal plan berdasarkan ID       |
+| POST   | `/calendar`          | Ya   | Menyimpan atau menerapkan meal plan ke kalender |
+| PATCH  | `/calendar`          | Ya   | Memperbarui meal plan                           |
+| DELETE | `/calendar/future`   | Ya   | Menghapus meal plan untuk jadwal mendatang      |
+| DELETE | `/calendar/:id`      | Ya   | Menghapus meal plan berdasarkan ID              |
+| POST   | `/calendar/generate` | Ya   | Generate meal plan                              |
+| POST   | `/recommend`         | Ya   | Mendapatkan rekomendasi meal plan               |
 
 ### Shopping Cart
 
-| Method | Endpoint | Auth | Deskripsi |
-| --- | --- | --- | --- |
-| GET | `/shopping-cart` | Ya | Mengambil daftar shopping cart |
-| POST | `/shopping-cart/generate` | Ya | Generate shopping cart berdasarkan meal plan |
-| PATCH | `/shopping-cart/:id/toggle` | Ya | Mengubah status item shopping cart |
+| Method | Endpoint                    | Auth | Deskripsi                                    |
+|--------|-----------------------------|------|----------------------------------------------|
+| GET    | `/shopping-cart`            | Ya   | Mengambil daftar shopping cart               |
+| POST   | `/shopping-cart/generate`   | Ya   | Generate shopping cart berdasarkan meal plan |
+| PATCH  | `/shopping-cart/:id/toggle` | Ya   | Mengubah status item shopping cart           |
 
 ### Header Autentikasi
 
 Endpoint yang membutuhkan autentikasi harus menyertakan header berikut:
 ```http request
- Authorization: Bearer <ACCESS_TOKEN>
+Authorization: Bearer <ACCESS_TOKEN>
 ```
 
 Beberapa endpoint juga membutuhkan header timezone:
