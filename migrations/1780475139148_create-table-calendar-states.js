@@ -1,4 +1,5 @@
 /* eslint-disable camelcase */
+
 /**
  * @type {import('node-pg-migrate').ColumnDefinitions | undefined}
  */
@@ -10,18 +11,10 @@
  * @returns {Promise<void> | void}
  */
 export const up = (pgm) => {
-  pgm.createTable('shopping_cart_items', {
-    id: { type: 'UUID', notNull: true, primaryKey: true },
-    user_id: {
-      type: 'UUID',
-      notNull: true,
-      references: '"neon_auth"."user"',
-      onDelete: 'CASCADE',
-    },
-    ingredient_name: { type: 'VARCHAR(50)', notNull: true },
-    required_amount: { type: 'SMALLINT', notNull: true },
-    is_checked: { type: 'BOOLEAN' },
-    recipe_sources: { type: 'JSONB', notNull: true },
+  pgm.createTable('calendar_states', {
+    id: { type: 'UUID', primaryKey: true },
+    user_id: { type: 'UUID', notNull: true, references: '"neon_auth"."user"' },
+    generated_at: { type: 'TIMESTAMP', notNull: true, default: pgm.func('NOW()')  },
   });
 };
 
@@ -31,5 +24,5 @@ export const up = (pgm) => {
  * @returns {Promise<void> | void}
  */
 export const down = (pgm) => {
-  pgm.dropTable('shopping_cart_items', { cascade: true });
+  pgm.dropTable('calendar_states', { cascade: true });
 };
