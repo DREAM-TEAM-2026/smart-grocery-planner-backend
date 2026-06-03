@@ -56,22 +56,10 @@ flowchart TD
 
 Fitur utama backend API:
 
-- Autentikasi request menggunakan token Neon Auth.
-- Pengambilan data pengguna berdasarkan ID.
-- Generate meal plan berdasarkan kebutuhan pengguna.
-- Rekomendasi meal plan.
-- Menyimpan meal plan ke kalender.
-- Mengambil daftar meal plan dari kalender.
-- Mengambil detail meal plan berdasarkan ID.
-- Memperbarui meal plan.
-- Menghapus meal plan tertentu.
-- Menghapus meal plan untuk jadwal mendatang.
-- Generate shopping cart berdasarkan meal plan.
-- Mengambil daftar shopping cart.
-- Toggle status item shopping cart.
-- Validasi request menggunakan Joi.
-- Error handling terpusat.
-- Database migration menggunakan node-pg-migrate.
+- Meal Plan Generation & Recommendation: Menghasilkan rencana makan berdasarkan kebutuhan pengguna dan menyajikan rekomendasi spesifik.
+- Calendar Management: Mengintegrasikan meal plan langsung ke kalender pengguna dengan kemampuan CRUD penuh (menyimpan, melihat detail, memperbarui, dan menghapus), termasuk penghapusan massal untuk jadwal mendatang. 
+- Automated Shopping Cart: Membuat daftar belanja berdasarkan meal plan yang aktif. Menyediakan manajemen daftar belanja dengan fitur ubah status (toggle) per item. 
+- User Data Retrieval: Menampilkan informasi profil pengguna berdasarkan identifikasi unik (ID).
 
 ## 4. Setup Environment
 
