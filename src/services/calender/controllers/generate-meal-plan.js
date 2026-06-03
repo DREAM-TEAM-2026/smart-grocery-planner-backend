@@ -16,17 +16,16 @@ export const generateMealPlan = async (req, res, next) => {
   const userTimezone = req.validHead['x-timezone'];
   // const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-  const tomorrowStr = dayjs()
+  const todayStr = dayjs()
     .tz(userTimezone)
-    .add(1, 'day')
     .format('YYYY-MM-DD');
 
   if (
-    (await calenderRepositories.countUpcomingMeals({ userId, tomorrowStr })) > 0
+    (await calenderRepositories.countUpcomingMeals({ userId, todayStr })) > 0
   ) {
     return next(
       new InvariantError(
-        'Harap hapus jadwal esok hari terlebih dahulu sebelum membuat jadwal baru.',
+        'Harap hapus jadwal hari ini dan esok hari terlebih dahulu sebelum membuat jadwal baru.',
       ),
     );
   }
@@ -40,7 +39,7 @@ export const generateMealPlan = async (req, res, next) => {
     },
     body: JSON.stringify({
       ...req.body,
-      start_date: tomorrowStr,
+      start_date: todayStr,
     }),
   });
 

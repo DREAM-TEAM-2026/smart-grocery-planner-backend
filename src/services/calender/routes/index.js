@@ -15,7 +15,7 @@ import { getMealPlan } from '../controllers/get-meal-plan.js';
 import { getMealDetailsById } from '../controllers/get-meal-details-by-id.js';
 import { updateMealPlan } from '../controllers/update-meal-plan.js';
 import { recommendMealPlan } from '../controllers/recommend-meal-plan.js';
-import { deleteFutureMealPlan } from '../controllers/delete-future-meal-plan.js';
+import { deleteTodayAndFutureMealPlan } from '../controllers/delete-today-and-future-meal-plan.js';
 import { deleteMealPlanById } from '../controllers/delete-meal-plan-by-id.js';
 import validateHeaders from '../../../middlewares/validateHeaders.js';
 import validateQuery from '../../../middlewares/validateQuery.js';
@@ -52,7 +52,7 @@ router.delete(
   '/calendar/future',
   authenticate,
   validateHeaders(headerTimezoneSchema),
-  deleteFutureMealPlan,
+  deleteTodayAndFutureMealPlan,
 );
 router.delete(
   '/calendar/:id',

@@ -12,32 +12,30 @@ export const applyMealPlan = async (req, res, next) => {
   const { id: userId } = req.user;
   const data = req.validated;
   const userTimezone = req.validHead['x-timezone'] || 'UTC';
-  // frontend need to do this const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-  const tomorrowStr = dayjs()
+  const todayStr = dayjs()
     .tz(userTimezone)
-    .add(1, 'day')
     .format('YYYY-MM-DD');
 
   const hasPastOrTodayDate = data.some((meal) => {
     const mealDateStr = dayjs(meal.scheduled_date).format('YYYY-MM-DD');
-    return mealDateStr < tomorrowStr;
+    return mealDateStr < todayStr;
   });
 
   if (hasPastOrTodayDate) {
     return next(
       new InvariantError(
-        'Jadwal makan hanya dapat diterapkan untuk waktu esok hari dan seterusnya.',
+        'Jadwal makan hanya dapat diterapkan untuk waktu Hari ini dan seterusnya.',
       ),
     );
   }
 
   if (
-    (await calenderRepositories.countUpcomingMeals({ userId, tomorrowStr })) > 0
+    (await calenderRepositories.countUpcomingMeals({ userId, todayStr })) > 0
   ) {
     return next(
       new InvariantError(
-        'Harap hapus jadwal esok hari terlebih dahulu sebelum menyimpan jadwal baru.',
+        'Harap hapus jadwal hari ini dan esok hari terlebih dahulu sebelum menyimpan jadwal baru.',
       ),
     );
   }

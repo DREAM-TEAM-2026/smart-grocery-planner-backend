@@ -6,11 +6,11 @@ class shoppingCartRepositories {
     this.pool = new Pool({ connectionString: process.env.DATABASE_URL });
   }
 
-  async getFutureMealPlan({ userId, tomorrowStr, targetDayStr }) {
+  async getFutureMealPlan({ userId, todayStr, targetDayStr }) {
     const query = {
       text: `SELECT id, recipe_name, ingredients FROM SCHEDULED_MEALS 
             WHERE user_id = $1 AND scheduled_date BETWEEN $2 AND $3;`,
-      values: [userId, tomorrowStr, targetDayStr],
+      values: [userId, todayStr, targetDayStr],
     };
 
     const result = await this.pool.query(query);

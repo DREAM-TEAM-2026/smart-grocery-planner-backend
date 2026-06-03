@@ -17,19 +17,18 @@ export const generateShoppingCart = async (req, res, next) => {
   const { days } = req.validated;
   const userTimezone = req.validHead['x-timezone'];
 
-  const tomorrowStr = dayjs()
+  const todayStr = dayjs()
     .tz(userTimezone)
-    .add(1, 'day')
     .format('YYYY-MM-DD');
 
   const targetDayStr = dayjs()
     .tz(userTimezone)
-    .add(days, 'days')
+    .add(days - 1, 'days')
     .format('YYYY-MM-DD');
 
   const mealPlan = await shoppingCartRepositories.getFutureMealPlan({
     userId,
-    tomorrowStr,
+    todayStr,
     targetDayStr,
   });
 
@@ -91,7 +90,7 @@ export const generateShoppingCart = async (req, res, next) => {
   const stateData = {
     id: uuidv7(),
     userId,
-    startDate: tomorrowStr,
+    startDate: todayStr,
     endDate: targetDayStr,
   };
 
@@ -126,6 +125,20 @@ export const getShoppingCart = async (req, res, next) => {
   if (cartState) {
     const { start_date, end_date, generated_at } = cartState;
 
+    const latestMealPlanState = await shoppingCartRepositories.getLatestMealPlanState(userId);
+    const mealPlanLastUpdated = latestMealPlanState?.generated_at;
+
+    console.log({ mealPlanLastUpdated, generated_at });
+
+    if (latestMealPlanState && mealPlanLastUpdated) {
+      const dtMealPlanLastUpdated = mealPlanLastUpdated.getTime();
+      const dtGeneratedAt = generated_at.getTime();
+
+      console.log({ dtMealPlanLastUpdated, dtGeneratedAt });
+
+      isStale = dtMealPlanLastUpdated > dtGeneratedAt;
+    }
+
     const modifiedRecord =
       await shoppingCartRepositories.getCalendarLastModified({
         userId,
@@ -135,7 +148,7 @@ export const getShoppingCart = async (req, res, next) => {
 
     const calendarLastModified = modifiedRecord?.calendar_last_modified;
 
-    if (calendarLastModified !== null && calendarLastModified !== undefined) {
+    if (calendarLastModified !== null && calendarLastModified !== undefined && !isStale) {
       const dtLastModified = calendarLastModified.getTime();
       const dtGeneratedAt = generated_at.getTime();
 
