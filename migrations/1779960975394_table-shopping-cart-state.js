@@ -26,5 +26,5 @@ export const up = (pgm) => {
  * @returns {Promise<void> | void}
  */
 export const down = (pgm) => {
-  pgm.dropTable('shopping_cart_state', { cascade: true });
+  pgm.dropTable('shopping_cart_states', { cascade: true });
 };
