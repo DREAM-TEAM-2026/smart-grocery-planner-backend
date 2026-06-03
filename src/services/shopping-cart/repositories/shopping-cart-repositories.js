@@ -107,6 +107,19 @@ class shoppingCartRepositories {
     return result.rows[0];
   }
 
+  async getLatestMealPlanState(userId) {
+    const query = {
+      text: `SELECT generated_at 
+            FROM CALENDAR_STATES
+            WHERE user_id = $1  
+            LIMIT 1;`,
+      values: [userId],
+    };
+
+    const result = await this.pool.query(query);
+    return result.rows[0];
+  }
+
   async toggleCart({ itemId, userId }) {
     const query = {
       text: `UPDATE SHOPPING_CART_ITEMS SET is_checked = NOT is_checked 

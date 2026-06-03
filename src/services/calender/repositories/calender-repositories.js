@@ -44,17 +44,45 @@ class CalenderRepositories {
       );
     });
 
-    const query = {
-      text: `INSERT INTO SCHEDULED_MEALS 
-              (id, user_id, scheduled_date, meal_type, recipe_name, minutes, calories, ingredients, cooking_steps) 
-              VALUES ${placeholders.join(', ')}
-              RETURNING *`,
-      values: values,
+    const deleteCalendarStateQuery = {
+      text: 'DELETE FROM CALENDAR_STATES WHERE user_id = $1;',
+      values: [userId],
     };
 
-    const result = await this.pool.query(query);
+    const insertMealsQuery = {
+      text: `INSERT INTO SCHEDULED_MEALS
+             (id, user_id, scheduled_date, meal_type, recipe_name, minutes, calories, ingredients, cooking_steps)
+             VALUES ${placeholders.join(', ')}
+                 RETURNING *;`,
+      values,
+    };
 
-    return result.rows;
+    const insertCalendarStateQuery = {
+      text: `INSERT INTO CALENDAR_STATES (id, user_id, generated_at)
+              VALUES ($1, $2, NOW());`,
+      values: [uuidv7(), userId],
+    };
+
+    const client = await this.pool.connect();
+
+    try {
+      await client.query('BEGIN');
+
+      const result = await client.query(insertMealsQuery);
+
+      await client.query(deleteCalendarStateQuery);
+
+      await client.query(insertCalendarStateQuery);
+
+      await client.query('COMMIT');
+
+      return result.rows;
+    } catch (error) {
+      await client.query('ROLLBACK');
+      throw error;
+    } finally {
+      client.release();
+    }
   }
 
   async getMealDetails({ userId, slotId }) {
