@@ -67,6 +67,6 @@ router.post(
   validateHeaders(headerTimezoneSchema),
   generateMealPlan,
 );
-router.post('/recommend', validate(recommendPayloadSchema), recommendMealPlan);
+router.post('/recommend', authenticate, validate(recommendPayloadSchema), recommendMealPlan);
 
 export default router;
