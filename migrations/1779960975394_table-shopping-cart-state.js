@@ -11,9 +11,9 @@ export const shorthands = undefined;
  * @returns {Promise<void> | void}
  */
 export const up = (pgm) => {
-  pgm.createTable('shopping_cart_state', {
+  pgm.createTable('shopping_cart_states', {
     id: { type: 'UUID', notNull: true, primaryKey: true },
-    user_id: { type: 'UUID', notNull: true, references: '"neon_auth"."user"' },
+    user_id: { type: 'UUID', notNull: true, references: '"neon_auth"."user"', onDelete: 'CASCADE' },
     start_date: { type: 'DATE', notNull: true },
     end_date: { type: 'DATE', notNull: true },
     generated_at: { type: 'TIMESTAMP', notNull: true },
@@ -26,5 +26,5 @@ export const up = (pgm) => {
  * @returns {Promise<void> | void}
  */
 export const down = (pgm) => {
-  pgm.dropTable('shopping_cart_state', { cascade: true });
+  pgm.dropTable('shopping_cart_states', { cascade: true });
 };

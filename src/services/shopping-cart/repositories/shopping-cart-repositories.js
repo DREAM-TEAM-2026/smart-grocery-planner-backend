@@ -29,7 +29,7 @@ class shoppingCartRepositories {
         [userId],
       );
       await client.query(
-        'DELETE FROM shopping_cart_state WHERE user_id = $1;',
+        'DELETE FROM shopping_cart_states WHERE user_id = $1;',
         [userId],
       );
 
@@ -41,7 +41,7 @@ class shoppingCartRepositories {
       };
 
       const stateQuery = {
-        text: `INSERT INTO SHOPPING_CART_STATE (id, user_id, start_date, end_date, generated_at) 
+        text: `INSERT INTO SHOPPING_CART_STATES (id, user_id, start_date, end_date, generated_at) 
                     VALUES ($1, $2, $3, $4, NOW());`,
         values: [
           stateData.id,
@@ -74,7 +74,7 @@ class shoppingCartRepositories {
   async getCartState(userId) {
     const query = {
       text: `SELECT start_date, end_date, generated_at 
-            FROM shopping_cart_state WHERE user_id = $1
+            FROM shopping_cart_states WHERE user_id = $1
             LIMIT 1;`,
       values: [userId],
     };

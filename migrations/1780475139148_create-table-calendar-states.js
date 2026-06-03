@@ -13,7 +13,7 @@
 export const up = (pgm) => {
   pgm.createTable('calendar_states', {
     id: { type: 'UUID', primaryKey: true },
-    user_id: { type: 'UUID', notNull: true, references: '"neon_auth"."user"' },
+    user_id: { type: 'UUID', notNull: true, references: '"neon_auth"."user"', onDelete: 'CASCADE' },
     generated_at: { type: 'TIMESTAMP', notNull: true, default: pgm.func('NOW()')  },
   });
 };
